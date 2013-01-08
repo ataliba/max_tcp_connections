@@ -37,7 +37,7 @@ NConnections=$(netstat -an | $AWK -v start=1 -v end=65535 ' $NF ~ /TIME_WAIT|EST
     END {print connections}')
 
 
-if [ $(echo "(200*100)/65536"| bc) -gt 80 ]; then 
+if [ $(echo "($NConnections*100)/$MaxConn"| bc) -gt 80 ]; then 
   echo "Your system reached 80% of your tcp connections use";
 else
   echo "No problems with your tcp connections "
