@@ -1,6 +1,6 @@
 #!/bin/bash
-set -x 
 
+# Get the OS type 
 OS=$(uname)
 
 case "$OS" in
@@ -15,7 +15,11 @@ case "$OS" in
             ;;
 esac
 
-netstat -an | $AWK -v start=1 -v end=65535 ' $NF ~ /TIME_WAIT|ESTABLISHED/ && $4 !~ /127\.0\.0\.1/ {
+# Get the max number of TCP Connections 
+MaxConn=$(eval cat /proc/sys/net/netfilter/nf_conntrack_max)
+
+# get the number of TCP Connections on this moment 
+NConnections=$(netstat -an | $AWK -v start=1 -v end=65535 ' $NF ~ /TIME_WAIT|ESTABLISHED/ && $4 !~ /127\.0\.0\.1/ {
     if ($1 ~ /\./)
             {sip=$1}
     else {sip=$4}
@@ -30,5 +34,14 @@ netstat -an | $AWK -v start=1 -v end=65535 ' $NF ~ /TIME_WAIT|ESTABLISHED/ && $4
             ++connections;
             }
     }
-    END {print connections}'
+    END {print connections}')
+
+
+if [ $(echo "(200*100)/65536"| bc) -gt 80 ]; then 
+  echo "Your system reached 80% of your tcp connections use";
+else
+  echo "No problems with your tcp connections "
+fi 
+
+
 
