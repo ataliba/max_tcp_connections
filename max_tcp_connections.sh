@@ -53,12 +53,5 @@ if [ $Status -gt 90 ]; then
    exit 2
 fi 
 
- 
-if [ $(echo "($NConnections*100)/$MaxConn"| bc) -gt 80 ]; then 
-  echo "Your system reached 80% of your tcp connections use";
-else
-  echo "No problems with your tcp connections "
-fi 
-
 
 
