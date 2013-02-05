@@ -38,17 +38,17 @@ NConnections=$(netstat -an | $AWK -v start=1 -v end=65535 ' $NF ~ /TIME_WAIT|EST
 
 Status=$(echo "($NConnections*100)/$MaxConn"|bc)
 
-if [ $Status -le 74 ]; then 
+if [ $Status -le 60 ]; then 
    echo "OK - Low number of TCP Connections ( $NConnections connections / $Status % of Total )"
    exit 0
 fi
 
-if [ $Status -ge 76 -a $Status -le 89 ]; then 
+if [ $Status -ge 61 -a $Status -le 75 ]; then 
    echo "WARNING - You number of connections increase ( $NConnections connections /  $Status % of Total )"
    exit 1
 fi 
 
-if [ $Status -gt 90 ]; then 
+if [ $Status -gt 76 ]; then 
    echo "CRITICAL - High number of tcp Connections ( $NConnections connections / $Status % of Total ) "
    exit 2
 fi 
