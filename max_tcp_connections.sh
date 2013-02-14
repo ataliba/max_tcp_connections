@@ -15,8 +15,8 @@ case "$OS" in
             ;;
 esac
 
-# Get the max number of TCP Connections 
-MaxConn=$(eval cat /proc/sys/net/netfilter/nf_conntrack_max)
+# Get the max number of TCP Connections
+MaxConn=$(eval cat `eval find /proc -name '*conntrack_max*' | head -1`)
 
 # get the number of TCP Connections on this moment 
 NConnections=$(netstat -an | $AWK -v start=1 -v end=65535 ' $NF ~ /TIME_WAIT|ESTABLISHED/ && $4 !~ /127\.0\.0\.1/ {
