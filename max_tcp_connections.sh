@@ -1,25 +1,10 @@
 #!/bin/bash
 
-# Get the OS type 
-OS=$(uname)
-
-case "$OS" in
-    'SunOS')
-            AWK=/usr/bin/nawk
-            ;;
-    'Linux')
-            AWK=/bin/awk
-            ;;
-    'AIX')
-            AWK=/usr/bin/awk
-            ;;
-esac
-
-# Get the max number of TCP Connections
-MaxConn=$(eval cat `eval find /proc -name '*conntrack_max*' | head -1`)
+# Get the max number of TCP Connections 
+MaxConn=$(sysctl -a  | grep net.ipv4.netfilter.ip_conntrack_max | awk -F "=" '{print $2}' | tr -d '[:space:]')
 
 # get the number of TCP Connections on this moment 
-NConnections=$(netstat -an | $AWK -v start=1 -v end=65535 ' $NF ~ /TIME_WAIT|ESTABLISHED/ && $4 !~ /127\.0\.0\.1/ {
+NConnections=$(netstat -an | awk  -v start=1 -v end=65535 ' $NF ~ /TIME_WAIT|ESTABLISHED/ && $4 !~ /127\.0\.0\.1/ {
     if ($1 ~ /\./)
             {sip=$1}
     else {sip=$4}
@@ -51,7 +36,5 @@ fi
 if [ $Status -gt 76 ]; then 
    echo "CRITICAL - High number of tcp Connections ( $NConnections connections / $Status % of Total ) "
    exit 2
-fi 
-
-
+fi
 
